@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM Classifier App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            width: 45%;
+            max-width: 600px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            font-size: 28px;
+            color: #ffeb3b;
+        }
+        p {
+            font-size: 16px;
+            color: #ddd;
+            line-height: 1.6;
+        }
+        .input-group {
+            margin: 15px 0;
+            text-align: left;
+        }
+        label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        input {
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        button {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #e68900;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            background-color: rgba(0, 255, 127, 0.2);
+            color: #00ff7f;
+            display: none;
+        }
+        .image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.image-container img {
+    width: 100%;
+    max-width: 250px;
+    background-color: white; /* White background */
+    padding: 10px; /* Spacing around the image */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    border: 2px solid #ffeb3b; /* Yellow border to match text */
+}
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔍 SVM Classifier App</h2>
+        <p>This application uses a **Support Vector Machine (SVM)** model to classify data points. 
+           Enter values for Feature 1 and Feature 2, and click **Predict** to classify the input.</p>
+
+        <div class="image-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/SVM_margin.png/640px-SVM_margin.png" alt="SVM Visualization">
+        </div>
+
+        <form id="predictForm">
+            <div class="input-group">
+                <label>Feature 1:</label>
+                <input type="number" id="feature1" step="0.1" required>
+            </div>
+
+            <div class="input-group">
+                <label>Feature 2:</label>
+                <input type="number" id="feature2" step="0.1" required>
+            </div>
+
+            <button type="submit">🚀 Predict</button>
+        </form>
+
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <footer>✨ Created by <strong>KARTHIK SHERLA</strong> | Machine Learning Classifier ✨</footer>
+
+    <script>
+        document.getElementById("predictForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let feature1 = document.getElementById("feature1").value;
+            let feature2 = document.getElementById("feature2").value;
+
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ feature1: feature1, feature2: feature2 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultBox = document.getElementById("result");
+                if (data.error) {
+                    resultBox.innerText = "❌ Error: " + data.error;
+                    resultBox.style.color = "red";
+                    resultBox.style.backgroundColor = "#ffcccc";
+                } else {
+                    resultBox.innerText = "✅ Predicted Class: " + data.prediction;
+                    resultBox.style.color = "#00ff7f";
+                    resultBox.style.backgroundColor = "rgba(0, 255, 127, 0.2)";
+                }
+                resultBox.style.display = "block";
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
